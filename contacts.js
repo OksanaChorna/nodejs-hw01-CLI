@@ -1,23 +1,55 @@
-// const fs = require("fs").promises
-// const path = require("path")
+const fs = require("fs").promises
+const path = require("path")
+const contacts = require("./db");
 
-// const contactsPath = path.join(__dirname, "./db/contacts.json");
+const contactsPath = path.join(__dirname, "./db/contacts.json");
 // console.log(contactsPath);
 
-// // TODO: задокументировать каждую функцию
-// async function listContacts() {
+// TODO: задокументировать каждую функцию
+async function listContacts() {
+  try {
+    const data = await fs.readFile(contactsPath);
+    const result = JSON.parse(data);
+    console.table(result);
+  } catch (error) {
+    console.log(error.message);
+  }
+}
+// listContacts()
+
+// async function getContactById(contactId) {
 //   try {
-//     const data = await fs.readFile(contactsPath);
-//     const result = JSON.parse(data);
-//     console.table(result);
+//       const listContacts = await contacts.getAll();
+//       const findContact = listContacts.find(contact => {
+//         //   console.log(contact);
+//         //   console.log(contact.id);
+//           contact.id === contactId
+//       })
+//       if (!findContact) {
+//           throw new Error("Id incorrect")
+//       }
+//       console.log(findContact);
+//     // return findContact;
 //   } catch (error) {
-//     console.log(error.message);
+//     throw error;
 //   }
 // }
+// getContactById(1)
 
-// // function getContactById(contactId) {
-// //   // ...твой код
-// // }
+const getContactById = async (contactId) => {
+  try {
+    const listContacts = await contacts.getAll();
+    const findContact = listContacts.find((item) => item.id === contactId);
+    if (!findContact) {
+      throw new Error("Id incorrect");
+      }
+      console.log(findContact);
+    // return findContact;
+  } catch (error) {
+    throw error;
+  }
+};
+getContactById(5)
 
 // // function removeContact(contactId) {
 // //   // ...твой код
@@ -28,20 +60,28 @@
 // // }
 
 
-const contacts = require("./db");
+// По відеолекції
+// const contacts = require("./db");
 
-(async ()=> {
-    try {
-        const listContacts = await contacts.getAll();
-        console.log(listContacts);
-    }
-    catch(error){
-        console.log(error);
-    }
+// (async ()=> {
+//     try {
+//         const listContacts = await contacts.getAll();
+//         // console.table(listContacts);
+
+//         const contactId = "5";
+//         const contactById = await contacts.getContactById(contactId);
+//         console.log(contactById);
+//     }
+//     catch(error){
+//         console.log(error);
+//     }
     
-})()
+// })()
 
-// module.exports = {
-//     listContacts,
-//     // getContactById, removeContact, addContact
-// }
+
+
+module.exports = {
+    listContacts,
+    // getContactById, 
+    // removeContact, addContact
+}
