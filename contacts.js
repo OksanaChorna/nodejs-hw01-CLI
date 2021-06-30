@@ -1,9 +1,10 @@
-const fs = require("fs").promises
-const path = require("path")
+const fs = require("fs").promises;
+const path = require("path");
 const contacts = require("./db");
+const { v4 } = require("uuid");
 
 const contactsPath = path.join(__dirname, "./db/contacts.json");
-// console.log(contactsPath);
+const updateContacts = require("./db/updContact");
 
 // TODO: задокументировать каждую функцию
 async function listContacts() {
@@ -15,50 +16,53 @@ async function listContacts() {
     console.log(error.message);
   }
 }
-// listContacts()
+// listContacts();
 
-// async function getContactById(contactId) {
-//   try {
-//       const listContacts = await contacts.getAll();
-//       const findContact = listContacts.find(contact => {
-//         //   console.log(contact);
-//         //   console.log(contact.id);
-//           contact.id === contactId
-//       })
-//       if (!findContact) {
-//           throw new Error("Id incorrect")
-//       }
-//       console.log(findContact);
-//     // return findContact;
-//   } catch (error) {
-//     throw error;
-//   }
-// }
-// getContactById(1)
-
-const getContactById = async (contactId) => {
+async function getContactById(contactId) {
   try {
     const listContacts = await contacts.getAll();
-    const findContact = listContacts.find((item) => item.id === contactId);
+    const findContact = await listContacts.find((contact) => {
+      return contact.id === contactId;
+    });
     if (!findContact) {
       throw new Error("Id incorrect");
-      }
-      console.log(findContact);
-    // return findContact;
+    }
+    console.log(findContact);
   } catch (error) {
     throw error;
   }
-};
-getContactById(5)
+}
+// getContactById(5);
 
-// // function removeContact(contactId) {
-// //   // ...твой код
-// // }
+async function removeContact(contactId) {
+  try {
+    const listContacts = await contacts.getAll();
+    const index = listContacts.findIndex((contact) => contact.id === contactId);
+    if (index === -1) {
+      throw new Error("Id incorrect");
+    }
+    const filteredContacts = listContacts.filter(
+      (contact) => contact.id !== contactId
+    );
+    await updateContacts(filteredContacts);
+  } catch (error) {
+    throw error;
+  }
+}
+// removeContact(2);
 
-// // function addContact(name, email, phone) {
-// //   // ...твой код
-// // }
-
+async function addContact(name, email, phone) {
+  const newContact = { id: v4(), name, email, phone };
+  try {
+    const listContacts = await contacts.getAll();
+    const newContacts = [...listContacts, newContact];
+    updateContacts(newContacts);
+    console.table(newContacts);
+  } catch (error) {
+    throw error;
+  }
+}
+// addContact("Cat", "cat@mew.com", "3422486");
 
 // По відеолекції
 // const contacts = require("./db");
@@ -75,13 +79,12 @@ getContactById(5)
 //     catch(error){
 //         console.log(error);
 //     }
-    
+
 // })()
 
-
-
 module.exports = {
-    listContacts,
-    // getContactById, 
-    // removeContact, addContact
-}
+  listContacts,
+  getContactById,
+  removeContact,
+  addContact,
+};
