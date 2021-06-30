@@ -20,7 +20,7 @@ async function getContactById(contactId) {
   try {
     const listContacts = await contacts.getAll();
     const findContact = await listContacts.find((contact) => {
-      return contact.id === contactId;
+      return String(contact.id) === String(contactId);
     });
     console.log(findContact);
 
@@ -36,14 +36,17 @@ async function getContactById(contactId) {
 async function removeContact(contactId) {
   try {
     const listContacts = await contacts.getAll();
-    const index = listContacts.findIndex((contact) => contact.id === contactId);
+    const index = listContacts.findIndex(
+      (contact) => String(contact.id) === String(contactId)
+    );
     if (index === -1) {
       throw new Error("Id incorrect");
     }
     const filteredContacts = listContacts.filter((contact) => {
-      return contact.id !== contactId;
+      return String(contact.id) !== String(contactId);
     });
     await updateContacts(filteredContacts);
+    console.table(filteredContacts);
   } catch (error) {
     throw error;
   }
