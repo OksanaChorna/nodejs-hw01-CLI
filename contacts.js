@@ -1,12 +1,10 @@
 const fs = require("fs").promises;
 const path = require("path");
-const contacts = require("./db");
 const { v4 } = require("uuid");
-
+const contacts = require("./db");
 const contactsPath = path.join(__dirname, "./db/contacts.json");
 const updateContacts = require("./db/updContact");
 
-// TODO: задокументировать каждую функцию
 async function listContacts() {
   try {
     const data = await fs.readFile(contactsPath);
@@ -24,10 +22,11 @@ async function getContactById(contactId) {
     const findContact = await listContacts.find((contact) => {
       return contact.id === contactId;
     });
+    console.log(findContact);
+
     if (!findContact) {
       throw new Error("Id incorrect");
     }
-    console.log(findContact);
   } catch (error) {
     throw error;
   }
@@ -41,9 +40,9 @@ async function removeContact(contactId) {
     if (index === -1) {
       throw new Error("Id incorrect");
     }
-    const filteredContacts = listContacts.filter(
-      (contact) => contact.id !== contactId
-    );
+    const filteredContacts = listContacts.filter((contact) => {
+      return contact.id !== contactId;
+    });
     await updateContacts(filteredContacts);
   } catch (error) {
     throw error;
@@ -63,24 +62,6 @@ async function addContact(name, email, phone) {
   }
 }
 // addContact("Cat", "cat@mew.com", "3422486");
-
-// По відеолекції
-// const contacts = require("./db");
-
-// (async ()=> {
-//     try {
-//         const listContacts = await contacts.getAll();
-//         // console.table(listContacts);
-
-//         const contactId = "5";
-//         const contactById = await contacts.getContactById(contactId);
-//         console.log(contactById);
-//     }
-//     catch(error){
-//         console.log(error);
-//     }
-
-// })()
 
 module.exports = {
   listContacts,
