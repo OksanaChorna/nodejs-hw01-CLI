@@ -22,7 +22,7 @@ async function getContactById(contactId) {
     const findContact = await listContacts.find((contact) => {
       return String(contact.id) === String(contactId);
     });
-    console.log(findContact);
+    console.table(findContact);
 
     if (!findContact) {
       throw new Error("Id incorrect");
